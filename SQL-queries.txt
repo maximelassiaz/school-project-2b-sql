@@ -1,0 +1,106 @@
+-- Create database 'utilisateurs' after removing database with the same name
+DROP DATABASE IF EXISTS utilisateurs;
+CREATE DATABASE utilisateurs;
+
+-- Create table 'etudiants' after removing table with the same name
+DROP TABLE IF EXISTS etudiants;
+CREATE TABLE etudiants(
+    id INT(11) NOT NULL AUTO_INCREMENT,
+    nom VARCHAR(250) NOT NULL,
+    prenom VARCHAR(250) NOT NULL,
+    sexe BOOLEAN NOT NULL,
+    email VARCHAR(250) NOT NULL,
+    departement VARCHAR(250) NOT NULL,
+    date_naissance DATETIME NOT NULL,
+    id_matieres INT DEFAULT NULL,
+    PRIMARY KEY (id)
+    );
+
+-- Insert data into table 'etudiants' for non default values
+INSERT INTO etudiants (nom, prenom, sexe, email, departement, date_naissance, id_matieres) 
+VALUES 
+('TOUSESTOK', 'Michael', 0, 'michael@moi.com', 'ISERE', '1975-11-11 13:55:47', 1),
+('COOL', 'Sophie', 1, 'sophie@hotmail.fr', 'ARDECHE', '1984-06-16 13:55:47', 2),
+('PALMER', 'Laura', 1, 'laura@laposte.net', 'CORSE SUD', '1974-01-15 13:55:47', 1),
+('SUPERCOOL', 'Michelle ', 1, 'michelle@laposte.net', 'ISERE', '2001-07-10 13:55:47', 3),
+('JAVADCRIPT', 'Laurent ', 0, 'laurent@google.it', 'GARD', '1981-03-24 13:55:47', 1),
+('NODEJS', 'Laetitia ', 1, 'laetitia@gmail.com', 'LOIRE', '2004-06-28 13:55:47', 2),
+('JAVA', 'Johnatan ', 0, 'johnatant@google.fr', 'LOIRE', '1965-01-14 13:55:47', 3),
+('HTML', 'Anita ', 1, 'anita@laposte.net', 'MEUSE', '1988-05-18 13:55:47', 1),
+('TAPIN', 'Jean ', 0, 'jean@google.fr', 'MEUSE', '1942-07-16 13:55:47', 2),
+('CUBASE', 'Lucie ', 1, 'lucie@gmail.com', 'SAVOIE', '1989-10-17 13:55:47', 3),
+('ADOBE', 'Bob ', 0, 'bob@google.com', 'SAVOIE', '1959-01-01 13:55:47', 1),
+('VLC', 'Albin ', 0, 'albin@hotmail.com', 'VOSGES', '1999-07-02 13:55:47', 3),
+('POWERISO', 'Clementine ', 1, 'clementine@google.it', 'AIN', '1986-11-10 13:55:47', 1),
+('C#', 'Anthony', 1, 'anthony@google.com', 'CORSE', '2020-12-30 00:00:00', 2),
+('ALACOOL', 'Jane', 1, 'jane@google.fr', 'LOIRE', '1971-05-18 13:55:47', 3),
+('PYTHON', 'Marcel', 0, 'marcel@hotmail.fr', 'NORD', '1942-02-10 13:55:47', 1),
+('PDO', 'Sabine', 1, 'sabine@google.uk', 'NORD', '1987-01-05 13:55:47', 2),
+('UNITY', 'Léon', 0, 'leon@unity.com', 'NIEVRE', '1973-04-19 13:55:47', 3),
+('RUBY', 'Leila', 1, 'leila@gmail.fr', 'NIEVRE', '1985-06-24 13:55:47', 1),
+('RAILS', 'Moustapha', 0, 'moustapha@google.fr', 'NORD', '1962-12-01 13:55:47', 2),
+('KOTLIN', 'Aicha', 1, 'aicha@laposte.net', 'VOSGES', '1944-05-22 13:55:47', 3),
+('CSS', 'Lola', 1, 'lola@laposte.net', 'LOIRE', '1934-07-11 13:55:47', 1),
+('TWIG', 'Emilie', 1, 'emilie@gmail.uk', 'SAVOIE', '1974-11-11 13:55:47', 2),
+('NOSQL', 'Laura', 1, 'laura@cool.fr', 'ISERE', '2000-03-02 00:00:00', 1);
+
+-- Create table 'matieres' after removing table with the same name
+DROP TABLE IF EXISTS matieres;
+CREATE TABLE matieres (
+    id INT(11) NOT NULL AUTO_INCREMENT,
+    nom_matiere VARCHAR(250) NOT NULL,
+    PRIMARY KEY (id)
+);
+
+-- Insert data into 'matieres' table
+INSERT INTO matieres
+VALUES 
+(1, 'Mathématiques'),
+(2, 'Litérature'),
+(3, 'Science');
+
+-- Alter table 'etudiants' to introduce the FK 'id_matieres'
+ALTER TABLE etudiants
+  ADD CONSTRAINT FOREIGN KEY (id_matieres) REFERENCES matieres (id);
+
+-- SQL SELECT QUERIES -- 
+
+-- Display all students whose name is 'palmer'
+SELECT * FROM etudiants
+WHERE nom = 'palmer';
+
+-- Display all students that are female
+SELECT * FROM etudiants
+WHERE sexe = 1;
+
+-- Display all students who lives in a department whose name starts with 'N'
+SELECT * FROM etudiants
+WHERE departement LIKE 'N%';
+
+-- Display all students whose has a google email
+SELECT * FROM etudiants
+WHERE email LIKE '%@google%'; -- using @ has google can be contained in the name
+
+-- Display all students sorted by alphabetical order of the department they live in
+SELECT * FROM etudiants
+ORDER BY departement; (ASC) -- ASC being optionnal as it is the default
+
+-- Display the number of men and women among students
+SELECT COUNT(*) AS total_hommes FROM etudiants
+WHERE sexe = 0;
+SELECT COUNT(*) AS total_femmes FROM etudiants
+WHERE sexe = 1;
+
+-- Display students age
+SELECT TIMESTAMPDIFF(YEAR, date_naissance, CURDATE()) AS age, nom, prenom FROM etudiants;
+
+-- Display students' average age, could be floored or rounded if needed.
+SELECT AVG(TIMESTAMPDIFF(YEAR, date_naissance, CURDATE())) AS moyenne_age FROM etudiants;
+
+-- Display main course for students
+SELECT etudiants.nom, etudiants.prenom, matieres.nom_matiere FROM etudiants
+INNER JOIN matieres ON etudiants.id_matieres = matieres.id;
+
+-- Display info for student whose id is 9
+SELECT * FROM etudiants
+WHERE id = 9;
